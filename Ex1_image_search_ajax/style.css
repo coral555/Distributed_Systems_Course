@@ -1,0 +1,135 @@
+/* Submitted By: Coral Bahofrker */
+body {
+    font-family: Arial, sans-serif; /* set the font of the body */
+    margin: 0; /* remove default margin */
+    padding: 0; /* remove default padding */
+    display: flex; /* flex box layout */
+    flex-direction: column; /* arragne in column */
+    align-items: center; /* arragne in center */
+
+    /* background image */
+    background-image: url(https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvdjkwNC1udW5ueS0wMTJfMi5qcGc.jpg);
+    background-size: cover; /* make the background to cover the whole screen */
+}
+
+header {
+    background-color: cornflowerblue; /* set background color*/
+    color: white; /* set text color - my name and ID*/
+    padding: 1em; /* add padding around the header */
+    width: 100%; /* set header width to bee full */
+    text-align: center; /* align header in the middle */
+}
+
+.searchBar{
+    margin: 20px 0; /* add margin to place it */
+    text-align: center; /* align searchBar in the middle */
+}
+
+.searchBar input{ 
+    padding: 10px; /* padding inside the input */
+    font-size: 20px; /* text size */
+    width: 80%; /* set searchBar width */
+    max-width: 500px; /* max width for input */
+} 
+
+.image {
+    display: grid; /* grid layout */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* create cols the fill the whole container */
+    gap: 10px; /* space between pictures */
+    width: 80%; /* grid width */
+    max-width: 1200px; /* max width for each grid */
+    margin: 20px 0; /* add margin to place it */
+}
+
+.image img{ 
+    width: 100%; /* full picture width */
+    height: auto; /* */
+    cursor: pointer; /* change cursor to pointer */
+    border-radius: 8px; /* round picture corners */
+
+    /* background image */
+    background-image: url(https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvdjkwNC1udW5ueS0wMTJfMi5qcGc.jpg);
+    background-size: cover; /* make the background to cover the whole screen */
+} 
+
+.loadMore{
+    text-align: center; /* align in center */
+    margin-bottom: 20px; /* add margin below */
+    display: none; /* hide the button at first */
+}
+
+.loadMoreButton{
+    padding: 10px 20px; /* padding inside the button */
+    font-size: 16px; /* text size */
+    background-color: lightskyblue; /* button background color */
+    color: white; /* text color */
+    border: none; /* no border to the button */
+    cursor: pointer; /* change cursor to pointer */
+    border-radius: 5px; /* round corners */
+}
+
+.loadMoreButton:hover{
+    background-color: lightgray; /* button background color when hovering */
+}
+
+@media (max-width: 600px){
+    .searchBar input{
+        width: 90%; /* increase input width on small screens */
+    }
+
+    .image{
+        width: 90%; /* increase image grid width on small screens */
+    }
+}
+
+.modal{
+    display: block; /* pop/show the window*/
+    position: fixed; /* position according to the view */
+    z-index: 1000; /* pop on other element on the screen*/
+    
+    /* position the window on the right side of the screen and at the top */
+    right: 0; 
+    top: 0;
+
+    width: 30%; /* set window width */
+    height: 100%; /* set height to full */
+    overflow: auto; /* scroll if we need */
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 1); /* add a liitle bit shadow */
+
+    /* background image */
+    background-image: url(https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvdjkwNC1udW5ueS0wMTJfMi5qcGc.jpg);
+    background-size: cover; /* make the background to cover the whole screen */
+}
+
+.picWindow{
+    /* padding inside picture window and margin around */
+    padding: 20px; 
+    margin: 15px; 
+}
+
+.picWindow img{
+    max-width: 100%; /* making sure the picture width isn't overflow */
+    height: auto; 
+    display: block; /* show picture as a block element */
+    margin: 0 auto; /* put in the center */
+}
+
+p{
+    font-weight: bold; /* bold the description and like of a clicked picture*/
+}
+
+.picWindow .close{ 
+    position: absolute; /* put the button on the top right side */
+    top: 10px; 
+    right: 15px; 
+    font-size: 35px; /* size of the button */
+    cursor: pointer; /* change cursor to pointer */
+}
+
+@media (max-width: 768px) {
+    .modal {
+        width: 100%; /* set width to full on small screens */
+        height: auto; /* auto height to small screens */
+        bottom: 0; /* position at the button*/
+    }
+}
