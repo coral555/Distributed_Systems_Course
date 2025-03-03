@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Project</title>
+    <link rel="stylesheet" href="../css/editCss.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="../js/user_utils.js" defer></script>
+    <script>
+        $(document).ready(function() {
+            $.validator.addMethod("lettersOnly", function(value, element) { // Custom validator to allow only letters and spaces
+                return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
+            }, "Please enter letters only.");
+
+            const urlParams = new URLSearchParams(window.location.search); // Get the project ID from the URL parameters
+            const projectId = urlParams.get('projectId');
+
+            if (projectId) {  // If there is a project ID, fetch the project details
+                fetchProjectById(projectId, function(err, project) {
+                    if (err) {
+                        console.error('Error fetching project:', err);
+                        alert('Error fetching project details');
+                    } else {  // Populate the form fields with the fetched project data
+                        $('#projectName').val(project.name);
+                        $('#projectSummary').val(project.summary);
+                        $('#projectStartDate').val(new Date(project.start_date).toISOString().substring(0, 10));
+                        // project.team.forEach((member, index) => {
+                        //     displayTeamMember(index, member.name, member.email, member.role);
+                        // });
+                    }
+                });
+            }
+            // Function to add a new team member input set
+            function addNewTeamMember(index) {
+                const newTeamMemberTemplate = 
+                    `<div class="teamMember" data-index="${index}">
+                        <label for="newTeam[${index}][name]">Team Member Name:</label>
+                        <input type="text" name="newTeam[${index}][name]" required>
+
+                        <label for="newTeam[${index}][email]">Team Member Email:</label>
+                        <input type="email" name="newTeam[${index}][email]" required>
+
+                        <label for="newTeam[${index}][role]">Role:</label>
+                        <input type="text" name="newTeam[${index}][role]" required>
+
+                        <button type="button" class="removeNewTeamMember">Remove</button>
+                    </div>`;
+                $('#newTeamMembers').append(newTeamMemberTemplate);
+            }
+            // Add a new team member input set when the button is clicked
+            $('#addTeamMember').click(function() {
+                const index = $('#newTeamMembers .teamMember').length;
+                addNewTeamMember(index);
+            });
+            // Remove a team member input set when the remove button is clicked
+            $(document).on('click', '.removeNewTeamMember', function() {
+                $(this).parent('.teamMember').remove();
+            });
+            // Validate the form
+            $('#editProjectForm').validate({
+                rules: {
+                    projectName: "required",
+                    projectSummary: {
+                        required: true,
+                        minlength: 20,
+                        maxlength: 80
+                    },
+                    projectStartDate: {
+                        required: true,
+                        dateISO: true
+                    },
+                    'newTeam[][name]': {
+                        required: true,
+                        lettersOnly: true
+                    }
+                },
+                messages: {
+                    'newTeam[][name]': {
+                        required: "Team member name is required",
+                        lettersOnly: "Please enter letters only"
+                    }
+                },
+                submitHandler: function(form) {
+                    const newTeam = []; // Collect new team member data
+                    $('#newTeamMembers .teamMember').each(function() {
+                        const index = $(this).data('index');
+                        newTeam.push({
+                            name: $(`input[name="newTeam[${index}][name]"]`).val(),
+                            email: $(`input[name="newTeam[${index}][email]"]`).val(),
+                            role: $(`input[name="newTeam[${index}][role]"]`).val(),
+                        });
+                    });
+                    // Collect project data
+                    const projectData = {
+                        name: $('#projectName').val(),
+                        summary: $('#projectSummary').val(),
+                        start_date: new Date($('#projectStartDate').val()).getTime(),
+                        newTeam: newTeam,
+                    };
+                    // Update the project with the collected data
+                    updateProject(projectId, projectData, function(err, response) {
+                        if (err) {
+                            console.error('Error updating project:', err);
+                            alert('Error updating project');
+                        } else {
+                            alert('Project updated successfully!');
+                            window.location.href = 'index.html';
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Project</h1>
+        <form id="editProjectForm">
+            <label for="projectName">Project Name:</label>
+            <input type="text" id="projectName" name="projectName" required>
+
+            <label for="projectSummary">Summary:</label>
+            <textarea id="projectSummary" name="projectSummary" required></textarea>
+
+            <label for="projectStartDate">Start Date:</label>
+            <input type="date" id="projectStartDate" name="projectStartDate" required>
+
+            <fieldset id="newTeamMembers">
+                <legend>New Team Members</legend>
+                <!-- New team members will be added here -->
+            </fieldset>
+            <button type="button" id="addTeamMember">Add New Team Member</button>
+
+            <button type="submit">Update Project</button>
+        </form>
+    </div>
+</body>
+</html>

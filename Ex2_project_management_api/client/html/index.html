@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Management</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js"></script>
+    <script src="../js/user_utils.js" defer></script>
+    <script src="../js/script.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Project Management</h1>
+
+        <!-- Add new project button to redirect to form.html -->
+        <a href="form.html" class="addProjectBtn">Add New Project</a>
+
+        <!-- Filter options -->
+        <div class="filter-options">
+            <label for="filterSelect">Sort by:</label>
+            <select id="filterSelect">
+                <option value="start_date_desc">Start Date (Newest)</option>
+                <option value="start_date_asc">Start Date (Oldest)</option>
+                <option value="name_asc">Project Name (A-Z)</option>
+                <option value="name_desc">Project Name (Z-A)</option>
+                <option value="manager_asc">Manager Name (A-Z)</option>
+                <option value="manager_desc">Manager Name (Z-A)</option>
+            </select>
+        </div>
+
+        <!-- Project list table -->
+        <table id="projectsTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Project Name</th>
+                    <th>Manager Name</th>
+                    <th>Start Date</th>
+                    <th>Summary</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Projects will be populated here -->
+            </tbody>
+        </table>
+
+        <!-- Add new project button again at the bottom -->
+        <a href="form.html" class="addProjectBtn">Add New Project</a>
+    </div>
+
+    <!-- Modal for viewing images -->
+    <div id="viewImagesModal" class="modal">
+        <div class="modal-content">
+            <span id="closeViewImages" class="close">&times;</span>
+            <div id="viewImagesResults"></div>
+        </div>
+    </div>
+
+    <!-- Modal for searching images -->
+    <div id="imageSearchModal" class="modal">
+        <div class="modal-content">
+            <span id="closeImageSearch" class="close">&times;</span>
+            <input type="text" id="imageSearchInput" placeholder="Search for images...">
+            <button id="searchImageButton">Search</button>
+            <div id="imageSearchResults"></div>
+        </div>
+    </div>
+</body>
+</html>

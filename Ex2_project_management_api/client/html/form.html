@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Project</title>
+    <link rel="stylesheet" href="../css/formCss.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.serializeJSON/3.2.0/jquery.serializejson.min.js"></script>
+    <script src="../js/user_utils.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#projectForm').validate({   // Initialize form validation
+                rules: {
+                    name: "required", // Project name is required
+                    summary: {
+                        required: true, // Summary is required
+                        minlength: 20, // Minimum length of 20 characters
+                        maxlength: 80  // Maximum length of 80 characters
+                    },
+                    'manager[name]': "required", // Manager name is required
+                    'manager[email]': {
+                        required: true, // Manager email is required
+                        email: true // Must be a valid email format
+                    },
+                    start_date: {
+                        required: true, // Start date is required
+                        dateISO: true // Must be in ISO date format
+                    }
+                },
+                // Handle form submission
+                submitHandler: function(form) {
+                    const formData = $(form).serializeArray();   // Serialize form data into an array
+                    const projectData = { // Construct project data object
+                        name: formData.find(item => item.name === 'name').value,
+                        summary: formData.find(item => item.name === 'summary').value,
+                        manager: {
+                            name: formData.find(item => item.name === 'manager[name]').value,
+                            email: formData.find(item => item.name === 'manager[email]').value
+                        },
+                        start_date: formData.find(item => item.name === 'start_date').value,
+                        team: [],
+                        images: []
+                    };
+
+                    // Add team member data to project data object
+                    formData.filter(item => item.name.startsWith('team')).forEach((item, index) => {
+                        const [_, idx, key] = item.name.match(/team\[(\d+)\]\[(\w+)\]/);
+                        if (!projectData.team[idx]) projectData.team[idx] = {};
+                        projectData.team[idx][key] = item.value;
+                    });
+
+                    // Add image data to project data object
+                    formData.filter(item => item.name.startsWith('images')).forEach((item, index) => {
+                        const [_, idx, key] = item.name.match(/images\[(\d+)\]\[(\w+)\]/);
+                        if (!projectData.images[idx]) projectData.images[idx] = {};
+                        projectData.images[idx][key] = item.value;
+                    });
+
+                    console.log('Project Data:', projectData);
+
+                    addProject(projectData, function(err, response) { // Call addProject function to add the new project
+                        if (err) {
+                            alert('Error adding project: ' + err);
+                        } else {
+                            alert('Project added successfully!');
+                            window.location.href = 'index.html'; // Redirect to the main page
+                        }
+                    });
+                }
+            });
+
+            let teamMemberIndex = 1; // Initialize team member index
+
+            $('#addTeamMember').click(function() {  // Add a new team member input section
+                const teamMemberTemplate = `
+                    <div class="teamMember">
+                        <label for="team[${teamMemberIndex}][name]">Team Member Name:</label>
+                        <input type="text" name="team[${teamMemberIndex}][name]" required>
+                        
+                        <label for="team[${teamMemberIndex}][email]">Team Member Email:</label>
+                        <input type="email" name="team[${teamMemberIndex}][email]" required>
+                        
+                        <label for="team[${teamMemberIndex}][role]">Role:</label>
+                        <input type="text" name="team[${teamMemberIndex}][role]" required>
+                        
+                        <button type="button" class="removeTeamMember">Remove</button>
+                    </div>
+                `;
+                $('#teamMembers').append(teamMemberTemplate);
+                teamMemberIndex++;
+
+                // Add remove button to the first team member if there are more than one
+                if ($('.teamMember').length > 1 && !$('.teamMember:first .removeTeamMember').length) {
+                    $('.teamMember:first').append('<button type="button" class="removeTeamMember">Remove</button>');
+                }
+            });
+
+            $(document).on('click', '.removeTeamMember', function() {
+                $(this).parent('.teamMember').remove();
+                teamMemberIndex--;
+
+                // Remove remove button from the first team member if there's only one left
+                if ($('.teamMember').length === 1) {
+                    $('.teamMember:first .removeTeamMember').remove();
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Add New Project</h1>
+        <form id="projectForm">
+            <label for="name">Project Name:</label>
+            <input type="text" name="name" required>
+
+            <label for="summary">Summary (20-80 characters):</label>
+            <textarea name="summary" minlength="20" maxlength="80" required></textarea>
+
+            <fieldset>
+                <legend>Project Manager</legend>
+                <label for="manager[name]">Name:</label>
+                <input type="text" name="manager[name]" required>
+                
+                <label for="manager[email]">Email:</label>
+                <input type="email" name="manager[email]" required>
+            </fieldset>
+
+            <label for="start_date">Start Date:</label>
+            <input type="date" name="start_date" required>
+
+            <fieldset id="teamMembers">
+                <legend>Team Members</legend>
+                <div class="teamMember">
+                    <label for="team[0][name]">Team Member Name:</label>
+                    <input type="text" name="team[0][name]" required>
+                    
+                    <label for="team[0][email]">Team Member Email:</label>
+                    <input type="email" name="team[0][email]" required>
+                    
+                    <label for="team[0][role]">Role:</label>
+                    <input type="text" name="team[0][role]" required>
+                </div>
+            </fieldset>
+            <button type="button" id="addTeamMember">Add Team Member</button>
+            
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
